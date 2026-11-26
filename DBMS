@@ -1,0 +1,95 @@
+CREATE DATABASE HospitalDB;
+USE HospitalDB;
+
+-- Create Department table
+CREATE TABLE Department (
+    d_id INT PRIMARY KEY,
+    d_name VARCHAR(50),
+    location VARCHAR(50)
+);
+
+-- Create Doctor table
+CREATE TABLE Doctor (
+    dr_id INT PRIMARY KEY,
+    dr_name VARCHAR(50),
+    spl VARCHAR(50),
+    sal DECIMAL(10,2),
+    d_id INT,
+    FOREIGN KEY (d_id) REFERENCES Department(d_id)
+);
+
+-- Create Patient table
+CREATE TABLE Patient (
+    pt_id INT PRIMARY KEY,
+    pt_name VARCHAR(50),
+    grade CHAR(1),
+    city VARCHAR(50)
+);
+
+-- Create Appointment table
+CREATE TABLE Appointment (
+    ap_id INT PRIMARY KEY,
+    ap_date DATE,
+    status VARCHAR(20),
+    fee DECIMAL(10,2),
+    dr_id INT,
+    pt_id INT,
+    FOREIGN KEY (dr_id) REFERENCES Doctor(dr_id),
+    FOREIGN KEY (pt_id) REFERENCES Patient(pt_id)
+);
+
+-- Insert into Department
+INSERT INTO Department VALUES
+(1, 'Cardiology', 'Block A'),
+(2, 'Neurology', 'Block B'),
+(3, 'Orthopedics', 'Block C'),
+(4, 'Dermatology', 'Block D'),
+(5, 'Pediatrics', 'Block E');
+
+-- Insert into Doctor
+INSERT INTO Doctor VALUES
+(101, 'Amit Sharma', 'Cardiologist', 85000, 1),
+(102, 'Rahul Das', 'Neurologist', 90000, 2),
+(103, 'Priya Sen', 'Orthopedist', 75000, 3),
+(104, 'Neha Roy', 'Dermatologist', 65000, 4),
+(105, 'Arjun Singh', 'Pediatrician', 70000, 5),
+(106, 'Rohit Gupta', 'Cardiologist', 80000, 1),
+(107, 'Ananya Bose', 'Neurologist', 82000, 2);
+
+-- Insert into Patient
+INSERT INTO Patient VALUES
+(201, 'Ramesh Kumar', 'A', 'Kolkata'),
+(202, 'Sneha Das', 'B', 'Howrah'),
+(203, 'Vikram Singh', 'A', 'Delhi'),
+(204, 'Pooja Roy', 'C', 'Kolkata'),
+(205, 'Aditya Sen', 'B', 'Mumbai'),
+(206, 'Riya Gupta', 'A', 'Kolkata'),
+(207, 'Karan Bose', 'C', 'Durgapur');
+
+-- Insert into Appointment
+INSERT INTO Appointment VALUES
+(301, '2026-11-20', 'Completed', 800, 101, 201),
+(302, '2026-11-21', 'Completed', 1000, 102, 202),
+(303, '2026-11-22', 'Cancelled', 700, 103, 203),
+(304, '2026-11-23', 'Completed', 600, 104, 204),
+(305, '2026-11-24', 'Completed', 500, 105, 205),
+(306, '2026-11-25', 'Completed', 900, 106, 206),
+(307, '2026-11-26', 'Pending', 1000, 107, 207),
+(308, '2026-11-27', 'Pending', 800, 101, 202),
+(309, '2026-11-28', 'Pending', 700, 103, 201),
+(310, '2026-11-29', 'Pending', 600, 104, 205);
+
+-- Display all tables
+SHOW TABLES;
+
+-- Display table structures
+DESC Department;
+DESC Doctor;
+DESC Patient;
+DESC Appointment;
+
+-- Display all records
+SELECT * FROM Department;
+SELECT * FROM Doctor;
+SELECT * FROM Patient;
+SELECT * FROM Appointment;
