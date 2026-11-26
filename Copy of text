@@ -1,0 +1,249 @@
+ARTIFICIAL INTELLIGENCE
+EXPERIMENT 1: WATER JUG PROBLEM USING BFS
+from collections import deque
+def water_jug(capacity_a, capacity_b, target):
+start = (0, 0)
+queue = deque([(start, [])])
+visited = set()
+while queue:
+(a, b), path = queue.popleft()
+if (a, b) in visited:
+continue
+visited.add((a, b))
+if a == target or b == target:
+print("Solution Found:")
+for step in path:
+print(step)
+print("Final State:", (a, b))
+return
+states = [
+((capacity_a, b), "Fill Jug A"),
+((a, capacity_b), "Fill Jug B"),
+((0, b), "Empty Jug A"),
+((a, 0), "Empty Jug B")
+]
+amount = min(a, capacity_b - b)
+states.append(((a - amount, b + amount),
+"Pour A into B"))
+amount = min(b, capacity_a - a)
+states.append(((a + amount, b - amount),
+"Pour B into A"))
+for new_state, action in states:
+if new_state not in visited:
+queue.append((new_state, path + [action]))
+print("No solution exists.")
+water_jug(4, 3, 2)
+EXPERIMENT 2: GREEDY BEST-FIRST SEARCH AND A* SEARCH
+import heapq
+graph = {
+'A': [('B', 1), ('C', 4)],
+'B': [('D', 2)],
+'C': [('D', 1), ('E', 5)],
+'D': [('E', 3)],
+'E': []
+}
+heuristic = {
+'A': 4,
+'B': 3,
+'C': 4,
+'D': 2,
+'E': 0
+}
+def greedy_best_first(start, goal):
+pq = [(heuristic[start], start, [start])]
+visited = set()
+while pq:
+h, node, path = heapq.heappop(pq)
+if node == goal:
+print("Greedy Path:", path)
+return
+if node in visited:
+continue
+visited.add(node)
+for neighbour, cost in graph[node]:
+if neighbour not in visited:
+heapq.heappush(
+pq,
+(heuristic[neighbour],
+neighbour,
+path + [neighbour])
+)
+print("Path not found")
+def a_star(start, goal):
+pq = [(heuristic[start], 0, start, [start])]
+best_cost = {start: 0}
+while pq:
+f, g, node, path = heapq.heappop(pq)
+if g != best_cost.get(node):
+continue
+if node == goal:
+print("A* Path:", path)
+print("Total Cost:", g)
+return
+for neighbour, cost in graph[node]:
+new_cost = g + cost
+if new_cost < best_cost.get(
+neighbour, float('inf')
+):
+best_cost[neighbour] = new_cost
+heapq.heappush(
+pq,
+(new_cost + heuristic[neighbour],
+new_cost,
+neighbour,
+path + [neighbour])
+)
+print("Path not found")
+greedy_best_first('A', 'E')
+a_star('A', 'E')
+EXPERIMENT 3: GRAPH COLOURING USING BACKTRACKING
+V = 4
+graph = [
+[0, 1, 1, 1],
+[1, 0, 1, 0],
+[1, 1, 0, 1],
+[1, 0, 1, 0]
+]
+colors = ['Red', 'Green', 'Blue']
+result = [None] * V
+def is_safe(vertex, color):
+for i in range(V):
+if graph[vertex][i] == 1 and result[i] == color:
+return False
+return True
+def graph_coloring(vertex):
+if vertex == V:
+return True
+for color in colors:
+if is_safe(vertex, color):
+result[vertex] = color
+if graph_coloring(vertex + 1):
+return True
+result[vertex] = None
+return False
+if graph_coloring(0):
+print("Graph Coloring Solution:")
+for i in range(V):
+print("Vertex", i, ":", result[i])
+else:
+print("No solution exists.")
+EXPERIMENT 4: TIC-TAC-TOE USING MINIMAX
+board = [' ' for _ in range(9)]
+def display_board():
+print()
+for i in range(0, 9, 3):
+row = []
+for j in range(i, i + 3):
+row.append(board[j] if board[j] != ' ' else str(j + 1))
+print(" | ".join(row))
+if i < 6:
+print("---------")
+print()
+def check_winner(player):
+win_positions = [
+(0, 1, 2), (3, 4, 5), (6, 7, 8),
+(0, 3, 6), (1, 4, 7), (2, 5, 8),
+(0, 4, 8), (2, 4, 6)
+]
+for a, b, c in win_positions:
+if board[a] == board[b] == board[c] == player:
+return True
+return False
+def minimax(is_maximizing):
+if check_winner('O'):
+return 1
+if check_winner('X'):
+return -1
+if ' ' not in board:
+return 0
+if is_maximizing:
+best_score = -float('inf')
+for i in range(9):
+if board[i] == ' ':
+board[i] = 'O'
+score = minimax(False)
+board[i] = ' '
+best_score = max(score, best_score)
+return best_score
+else:
+best_score = float('inf')
+for i in range(9):
+if board[i] == ' ':
+board[i] = 'X'
+score = minimax(True)
+board[i] = ' '
+best_score = min(score, best_score)
+return best_score
+def ai_move():
+best_score = -float('inf')
+move = None
+for i in range(9):
+if board[i] == ' ':
+board[i] = 'O'
+score = minimax(False)
+board[i] = ' '
+if score > best_score:
+best_score = score
+move = i
+if move is not None:
+board[move] = 'O'
+def play_game():
+print("TIC TAC TOE")
+print("You are X and AI is O")
+print("Enter position numbers from 1 to 9")
+display_board()
+while True:
+try:
+move = int(input("Enter your position: ")) - 1
+except ValueError:
+print("Please enter a valid number.")
+continue
+if move < 0 or move >= 9 or board[move] != ' ':
+print("Invalid move! Try again.")
+continue
+board[move] = 'X'
+display_board()
+if check_winner('X'):
+print("Human Wins!")
+break
+if ' ' not in board:
+print("Game Draw!")
+break
+print("AI is thinking...")
+ai_move()
+display_board()
+if check_winner('O'):
+print("AI Wins!")
+break
+if ' ' not in board:
+print("Game Draw!")
+break
+play_game()
+Experiment 5: Knapsack Problem Using Dynamic Programming
+def knapsack(weights, values, capacity):
+n = len(weights)
+dp = [[0 for _ in range(capacity + 1)]
+for _ in range(n + 1)]
+for i in range(1, n + 1):
+for w in range(capacity + 1):
+if weights[i - 1] <= w:
+dp[i][w] = max(
+values[i - 1] +
+dp[i - 1][w - weights[i - 1]],
+dp[i - 1][w]
+)
+else:
+dp[i][w] = dp[i - 1][w]
+print("Maximum Value:", dp[n][capacity])
+w = capacity
+selected = []
+for i in range(n, 0, -1):
+if dp[i][w] != dp[i - 1][w]:
+selected.append(i)
+w -= weights[i - 1]
+selected.reverse()
+print("Selected Items:", selected)
+weights = [1, 3, 4, 5]
+values = [1, 4, 5, 7]
+capacity = 7
+knapsack(weights, values, capacity)
